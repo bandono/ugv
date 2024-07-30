@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'listener = twist_listener.listener:main',
+            'mover = twist_listener.mover:main',
         ],
     },
 )

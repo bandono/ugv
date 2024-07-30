@@ -8,29 +8,29 @@ Using OpenCV to capture video feed and convert to msg compatible to ROS2
 ## Installation 
 
 Dependencies Installation 
-'''
+```
 sudo apt install ros-humble-image-transport
 sudo apt install ros-humble-cv-bridge
 sudo apt install ros-humble-camera-info-manager
-'''
+```
 
 Package creation
-'''
+```
 ros2 pkg create --build-type ament_python my_camera_subscriber
-'''
+```
 
 Change and Modify all code created as committed to this repo (specially package.xml and setup.py)
 
 ## Building 
 
 Build using colcon 
-'''
+```
     colcon build
-'''
+```
 
 ## Running 
-'''
+```
     cd `/my_camera_subscriber 
     source install/setup.bash
     ros2 run my_camera_subscriber camera_subscriber
-'''
+```

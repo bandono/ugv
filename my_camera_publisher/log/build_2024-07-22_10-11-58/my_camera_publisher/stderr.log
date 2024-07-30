@@ -1,0 +1,5 @@
+  File "/home/hikmal/my_camera_publisher/install/my_camera_publisher/lib/python3.10/site-packages/my_camera_publisher/my_camera_publisher.py", line 35
+    ret, frame = self.cap.read(/dev/video2)
+                               ^
+SyntaxError: invalid syntax
+

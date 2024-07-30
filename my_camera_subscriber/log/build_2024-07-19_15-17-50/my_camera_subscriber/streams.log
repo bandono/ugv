@@ -1,0 +1,21 @@
+[0.449s] Invoking command in '/home/hikmal/my_camera_subscriber': PYTHONPATH=/home/hikmal/my_camera_subscriber/build/my_camera_subscriber/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/hikmal/my_camera_subscriber/install/my_camera_subscriber/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/my_camera_subscriber build --build-base /home/hikmal/my_camera_subscriber/build/my_camera_subscriber/build install --record /home/hikmal/my_camera_subscriber/build/my_camera_subscriber/install.log --single-version-externally-managed install_data
+[0.625s] running egg_info
+[0.625s] writing build/my_camera_subscriber/my_camera_subscriber.egg-info/PKG-INFO
+[0.630s] writing dependency_links to build/my_camera_subscriber/my_camera_subscriber.egg-info/dependency_links.txt
+[0.631s] writing entry points to build/my_camera_subscriber/my_camera_subscriber.egg-info/entry_points.txt
+[0.631s] writing requirements to build/my_camera_subscriber/my_camera_subscriber.egg-info/requires.txt
+[0.631s] writing top-level names to build/my_camera_subscriber/my_camera_subscriber.egg-info/top_level.txt
+[0.632s] reading manifest file 'build/my_camera_subscriber/my_camera_subscriber.egg-info/SOURCES.txt'
+[0.633s] writing manifest file 'build/my_camera_subscriber/my_camera_subscriber.egg-info/SOURCES.txt'
+[0.633s] running build
+[0.633s] running build_py
+[0.634s] running install
+[0.634s] running install_lib
+[0.635s] running install_data
+[0.636s] running install_egg_info
+[0.637s] removing '/home/hikmal/my_camera_subscriber/install/my_camera_subscriber/lib/python3.10/site-packages/my_camera_subscriber-0.0.0-py3.10.egg-info' (and everything under it)
+[0.637s] Copying build/my_camera_subscriber/my_camera_subscriber.egg-info to /home/hikmal/my_camera_subscriber/install/my_camera_subscriber/lib/python3.10/site-packages/my_camera_subscriber-0.0.0-py3.10.egg-info
+[0.638s] running install_scripts
+[0.652s] Installing camera_subscriber script to /home/hikmal/my_camera_subscriber/install/my_camera_subscriber/lib/my_camera_subscriber
+[0.652s] writing list of installed files to '/home/hikmal/my_camera_subscriber/build/my_camera_subscriber/install.log'
+[0.667s] Invoked command in '/home/hikmal/my_camera_subscriber' returned '0': PYTHONPATH=/home/hikmal/my_camera_subscriber/build/my_camera_subscriber/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/hikmal/my_camera_subscriber/install/my_camera_subscriber/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/my_camera_subscriber build --build-base /home/hikmal/my_camera_subscriber/build/my_camera_subscriber/build install --record /home/hikmal/my_camera_subscriber/build/my_camera_subscriber/install.log --single-version-externally-managed install_data

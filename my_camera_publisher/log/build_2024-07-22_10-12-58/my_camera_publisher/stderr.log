@@ -1,5 +1,0 @@
-  File "/home/hikmal/my_camera_publisher/install/my_camera_publisher/lib/python3.10/site-packages/my_camera_publisher/my_camera_publisher.py", line 28
-    self.cap = cv2.VideoCapture(/dev/video2)  # Change to your camera index or URL
-                                ^
-SyntaxError: invalid syntax
-

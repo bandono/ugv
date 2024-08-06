@@ -30,8 +30,6 @@ public:
 
     pwm_publisher_ = this->create_publisher<ugv::msg::PWM>("respati/ugv/pwm", 10);
     publisher_ = this->create_publisher<std_msgs::msg::String>("respati/ugv/commander", 10);
-    timer_ = this->create_wall_timer(
-      500ms, std::bind(&Vehicle::timer_callback, this));
 
     RCLCPP_INFO(this->get_logger(), "Commander Ready!");
   }
@@ -45,13 +43,25 @@ private:
     pwm_publisher_->publish(message);
   }
   void motor_l(const int throttle){
-    motor(8, 9, throttle);
+    motor(9, 8, throttle);
   }
   void motor_r(const int throttle){
-    motor(10, 11, throttle);
+    motor(11, 10, throttle);
   }
   void move_forward(){
     motor_l(1);
+    motor_r(1);
+  }
+  void move_back(){
+    motor_l(-1);
+    motor_r(-1);
+  }
+  void turn_right(){
+    motor_l(1);
+    motor_r(-1);
+  }
+  void turn_left(){
+    motor_l(-1);
     motor_r(1);
   }
   void stop(){
@@ -63,32 +73,98 @@ private:
   {
     RCLCPP_INFO(this->get_logger(), "Received command: %s", request->command.c_str());
 
-    if (request->command == "MOVE_FORWARD")
+    std::istringstream iss(request->command);
+    std::string action;
+    
+    if (iss >> action)
     {
-      response->message = "Command executed: MOVE_FORWARD";
-      RCLCPP_INFO(this->get_logger(), "Executing command: MOVE_FORWARD");
-      move_forward();
-    }
-    else if (request->command == "STOP"){
-      response->message = "Command executed: STOP";
-      RCLCPP_INFO(this->get_logger(), "Executing command: STOP");
-      stop();
+      if (action == "FORWARD")
+      {
+        int timer = -1;
+        iss >> timer;
+
+        move_forward();
+        if (timer != -1){
+          reset_timer_ = this->create_wall_timer(
+            std::chrono::seconds(timer), std::bind(&Vehicle::reset_timer_callback, this));
+        }
+
+        std::ostringstream oss;
+        oss << "move FORWARD for " << timer << "s" ;
+        response->message = oss.str().c_str();
+      }
+      else if (action == "BACK"){
+        int timer = -1;
+        iss >> timer;
+
+        move_back();
+        if (timer != -1){
+          reset_timer_ = this->create_wall_timer(
+            std::chrono::seconds(timer), std::bind(&Vehicle::reset_timer_callback, this));
+        }
+
+        std::ostringstream oss;
+        oss << "move BACK for " << timer << "s" ;
+        response->message = oss.str().c_str();
+      }
+      else if (action == "RIGHT"){
+        int timer = 1;
+        iss >> timer;
+
+        turn_right();
+        if (timer != -1){
+          reset_timer_ = this->create_wall_timer(
+            std::chrono::seconds(timer), std::bind(&Vehicle::reset_timer_callback, this));
+        }
+
+        std::ostringstream oss;
+        oss << "turn RIGHT for " << timer << "s" ;
+        response->message = oss.str().c_str();
+      }
+      else if (action == "LEFT"){
+        int timer = 1;
+        iss >> timer;
+
+        turn_left();
+        if (timer != -1){
+          reset_timer_ = this->create_wall_timer(
+            std::chrono::seconds(timer), std::bind(&Vehicle::reset_timer_callback, this));
+        }
+
+        std::ostringstream oss;
+        oss << "turn LEFT for " << timer << "s" ;
+        response->message = oss.str().c_str();
+      }
+      else if (action == "STOP"){
+        stop();
+
+        std::ostringstream oss;
+        oss << "Stopped";
+        response->message = oss.str().c_str();
+      }
+      else
+      {
+        response->message = "Unknown command";
+      }
     }
     else
     {
-      response->message = "Unknown command";
+      response->message = "Invalid command format";
     }
   }
 
-  
-  void timer_callback()
-  {
+  void reset_timer_callback(){
+    stop();
+    reset_timer_->cancel();
+  }
+  void timer_callback(){
     auto message = std_msgs::msg::String();
     message.data = "Hello, world! " + std::to_string(count_++);
     publisher_->publish(message);
   }
   
   rclcpp::Service<Command>::SharedPtr service_;
+  rclcpp::TimerBase::SharedPtr reset_timer_;
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<ugv::msg::PWM>::SharedPtr pwm_publisher_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;

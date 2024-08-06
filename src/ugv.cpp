@@ -2,6 +2,11 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <sstream>
+#include <cstddef>
+#include <sys/ioctl.h>
+#include <cstdlib>
+#include <cstdio>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -26,7 +31,26 @@ public:
   }
 
 private:
+  void motor(const int ch1, const int ch2, const int throttle){
+    std::ostringstream oss;
+    oss << "python3 scripts/motor.py --ch1=" << ch1 << " --ch2=" << ch2 << " --throttle=" << throttle;
 
+    int err = std::system(oss.str().c_str());
+  }
+  void motor_l(const int throttle){
+    motor(8, 9, throttle);
+  }
+  void motor_r(const int throttle){
+    motor(10, 11, throttle);
+  }
+  void move_forward(){
+    motor_l(1);
+    motor_r(1);
+  }
+  void stop(){
+    motor_l(0);
+    motor_r(0);
+  }
   void handle_command(const std::shared_ptr<Command::Request> request,
                       std::shared_ptr<Command::Response> response)
   {
@@ -36,7 +60,12 @@ private:
     {
       response->message = "Command executed: MOVE_FORWARD";
       RCLCPP_INFO(this->get_logger(), "Executing command: MOVE_FORWARD");
-      // Add your movement logic here
+      move_forward();
+    }
+    else if (request->command == "STOP"){
+      response->message = "Command executed: STOP";
+      RCLCPP_INFO(this->get_logger(), "Executing command: STOP");
+      stop();
     }
     else
     {

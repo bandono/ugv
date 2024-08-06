@@ -31,10 +31,6 @@ target_link_libraries(ground "${cpp_typesupport_target}")
 
 install(TARGETS
   vehicle
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(TARGETS
   ground
   DESTINATION lib/${PROJECT_NAME}
 )

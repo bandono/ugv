@@ -26,6 +26,8 @@ public:
     auto response_received_callback = [this](ServiceResponseFuture future)
     {
       auto response = future.get();
+      std::cout << "Response: " << response->message;
+
     };
 
     auto future_result = client_->async_send_request(request, response_received_callback);
@@ -39,8 +41,20 @@ int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<Ground>();
-  node->send_request("MOVE_FORWARD");
-  rclcpp::spin(node);
+  std::string command;
+  std::cout << "Enter command (or 'EXIT' to quit): \n";
+  while (rclcpp::ok())
+  {
+    std::cout << "> ";
+    std::getline(std::cin, command);
+    
+    if (command == "EXIT" || command == "exit")
+    {
+      break;
+    }
+
+    node->send_request(command);
+  }
   rclcpp::shutdown();
   return 0;
 }

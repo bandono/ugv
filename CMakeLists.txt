@@ -29,15 +29,20 @@ ament_target_dependencies(vehicle rclcpp std_msgs)
 add_executable(ground src/ground.cpp)
 ament_target_dependencies(ground rclcpp std_msgs)
 
+add_executable(teleop_keyboard src/teleop_keyboard.cpp)
+ament_target_dependencies(teleop_keyboard rclcpp std_msgs)
+
 rosidl_get_typesupport_target(cpp_typesupport_target
   ${PROJECT_NAME} rosidl_typesupport_cpp)
 
 target_link_libraries(vehicle "${cpp_typesupport_target}")
 target_link_libraries(ground "${cpp_typesupport_target}")
+target_link_libraries(teleop_keyboard "${cpp_typesupport_target}")
 
 install(TARGETS
   vehicle
   ground
+  teleop_keyboard
   DESTINATION lib/${PROJECT_NAME}
 )
 

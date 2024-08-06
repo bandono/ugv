@@ -1,0 +1,20 @@
+launch:
+- node:
+    pkg: "ugv"
+    exec: "vehicle"
+    name: "commander"
+    namespace: "vehicle"
+    remap:
+    -
+        from: "pwm"
+        to: "/vehicle/pwm"
+
+- node:
+    pkg: "ugv"
+    exec: "pwm.py"
+    name: "pwm"
+    namespace: "vehicle"
+    remap:
+    -
+        from: "pwm"
+        to: "/vehicle/pwm"

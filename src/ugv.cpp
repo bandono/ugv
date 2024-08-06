@@ -26,10 +26,8 @@ public:
     service_ = this->create_service<Command>("send_command", 
       std::bind(&Vehicle::handle_command, this, std::placeholders::_1, std::placeholders::_2));
 
-    int err = std::system("ros2 run ugv pwm.py &");
-
-    pwm_publisher_ = this->create_publisher<ugv::msg::PWM>("respati/ugv/pwm", 10);
-    publisher_ = this->create_publisher<std_msgs::msg::String>("respati/ugv/commander", 10);
+    pwm_publisher_ = this->create_publisher<ugv::msg::PWM>("pwm", 10);
+    publisher_ = this->create_publisher<std_msgs::msg::String>("commander", 10);
 
     RCLCPP_INFO(this->get_logger(), "Commander Ready!");
   }

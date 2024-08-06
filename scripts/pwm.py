@@ -15,17 +15,18 @@ class PWM_Subsciber(Node):
 
     def __init__(self):
         super().__init__('pwm')
-        self.subscription = self.create_subscription(
-            PWM,
-            'respati/ugv/pwm',
-            self.listener_callback,
-            10)
-        self.subscription  # prevent unused variable warning
 
         i2c = busio.I2C(board.SCL, board.SDA)
         self.pca = adafruit_pca9685.PCA9685(i2c)
 
         self.pca.frequency = 60
+
+        self.subscription = self.create_subscription(
+            PWM,
+            'pwm',
+            self.listener_callback,
+            10)
+        self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
         channel1 = self.pca.channels[msg.ch1]

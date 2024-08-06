@@ -48,4 +48,11 @@ install(PROGRAMS
 
 ament_export_dependencies(rosidl_default_runtime)
 
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+
+
 ament_package()

@@ -11,6 +11,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "ugv/srv/command.hpp"
+#include "ugv/msg/pwm.hpp"
 
 using namespace std::chrono_literals;
 
@@ -25,17 +26,23 @@ public:
     service_ = this->create_service<Command>("send_command", 
       std::bind(&Vehicle::handle_command, this, std::placeholders::_1, std::placeholders::_2));
 
+    int err = std::system("ros2 run ugv pwm.py &");
+
+    pwm_publisher_ = this->create_publisher<ugv::msg::PWM>("respati/ugv/pwm", 10);
     publisher_ = this->create_publisher<std_msgs::msg::String>("respati/ugv/commander", 10);
     timer_ = this->create_wall_timer(
       500ms, std::bind(&Vehicle::timer_callback, this));
+
+    RCLCPP_INFO(this->get_logger(), "Commander Ready!");
   }
 
 private:
   void motor(const int ch1, const int ch2, const int throttle){
-    std::ostringstream oss;
-    oss << "python3 scripts/motor.py --ch1=" << ch1 << " --ch2=" << ch2 << " --throttle=" << throttle;
-
-    int err = std::system(oss.str().c_str());
+    auto message = ugv::msg::PWM();
+    message.ch1 = ch1;
+    message.ch2 = ch2;
+    message.throttle = throttle;
+    pwm_publisher_->publish(message);
   }
   void motor_l(const int throttle){
     motor(8, 9, throttle);
@@ -83,6 +90,7 @@ private:
   
   rclcpp::Service<Command>::SharedPtr service_;
   rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::Publisher<ugv::msg::PWM>::SharedPtr pwm_publisher_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
   size_t count_;
 };

@@ -26,7 +26,7 @@ public:
     auto response_received_callback = [this](ServiceResponseFuture future)
     {
       auto response = future.get();
-      std::cout << response->message;
+      std::cout << "Response: " << response->message;
     };
 
     auto result = client_->async_send_request(request, response_received_callback);

@@ -138,6 +138,18 @@ private:
         oss << "Stopped";
         response->message = oss.str().c_str();
       }
+      else if(action == "MOTOR"){
+        int ch1 = 0;
+        int ch2 = 0;
+        float throttle = 0;
+        iss >> ch1 >> ch2 >> throttle;
+
+        motor(ch1, ch2, throttle);
+        
+        std::ostringstream oss;
+        oss << "Set Channel " << ch1 << " And Channel " << ch2 << " To " << throttle;
+        response->message = oss.str().c_str();
+      }
       else
       {
         response->message = "Unknown command";

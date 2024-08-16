@@ -16,10 +16,7 @@ class PWM_Subsciber(Node):
     def __init__(self):
         super().__init__('pwm')
 
-        i2c = busio.I2C(board.SCL, board.SDA)
-        self.pca = adafruit_pca9685.PCA9685(i2c)
-
-        self.pca.frequency = 60
+        self.init_pca()
 
         self.subscription = self.create_subscription(
             PWM,
@@ -28,12 +25,24 @@ class PWM_Subsciber(Node):
             10)
         self.subscription  # prevent unused variable warning
 
+    def init_pca(self):
+        i2c = busio.I2C(board.SCL, board.SDA)
+        try:
+            self.pca = adafruit_pca9685.PCA9685(i2c)
+            self.pca.frequency = 60
+        except:
+            self.pca = None
+    
     def listener_callback(self, msg):
-        channel1 = self.pca.channels[msg.ch1]
-        channel2 = self.pca.channels[msg.ch2]
-        motor1 = motor.DCMotor(channel1, channel2)
+        if self.pca != None:
+            channel1 = self.pca.channels[msg.ch1]
+            channel2 = self.pca.channels[msg.ch2]
+            motor1 = motor.DCMotor(channel1, channel2)
 
-        motor1.throttle = msg.throttle
+            motor1.throttle = msg.throttle
+        else:
+            self.init_pca()
+    
 
 
 def main(args=None):

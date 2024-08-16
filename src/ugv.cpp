@@ -9,7 +9,6 @@
 #include <cstdio>
 
 #include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
 #include "ugv/srv/command.hpp"
 #include "ugv/msg/pwm.hpp"
 
@@ -27,7 +26,6 @@ public:
       std::bind(&Vehicle::handle_command, this, std::placeholders::_1, std::placeholders::_2));
 
     pwm_publisher_ = this->create_publisher<ugv::msg::PWM>("pwm", 10);
-    publisher_ = this->create_publisher<std_msgs::msg::String>("commander", 10);
 
     RCLCPP_INFO(this->get_logger(), "Commander Ready!");
   }
@@ -155,17 +153,10 @@ private:
     stop();
     reset_timer_->cancel();
   }
-  void timer_callback(){
-    auto message = std_msgs::msg::String();
-    message.data = "Hello, world! " + std::to_string(count_++);
-    publisher_->publish(message);
-  }
   
   rclcpp::Service<Command>::SharedPtr service_;
   rclcpp::TimerBase::SharedPtr reset_timer_;
-  rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<ugv::msg::PWM>::SharedPtr pwm_publisher_;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
   size_t count_;
 };
 

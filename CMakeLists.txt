@@ -5,7 +5,6 @@ project(ugv)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
-find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 set(msg_files
@@ -24,13 +23,13 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 include_directories(include)  
 
 add_executable(vehicle src/ugv.cpp)
-ament_target_dependencies(vehicle rclcpp std_msgs)
+ament_target_dependencies(vehicle rclcpp)
 
 add_executable(ground src/ground.cpp)
-ament_target_dependencies(ground rclcpp std_msgs)
+ament_target_dependencies(ground rclcpp)
 
 add_executable(teleop_keyboard src/teleop_keyboard.cpp)
-ament_target_dependencies(teleop_keyboard rclcpp std_msgs)
+ament_target_dependencies(teleop_keyboard rclcpp)
 
 rosidl_get_typesupport_target(cpp_typesupport_target
   ${PROJECT_NAME} rosidl_typesupport_cpp)
@@ -48,6 +47,7 @@ install(TARGETS
 
 install(PROGRAMS
   scripts/pwm.py
+  scripts/vn.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

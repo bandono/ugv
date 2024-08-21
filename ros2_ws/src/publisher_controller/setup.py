@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'controller = publisher_controller.controller:main',
+            'publisher = publisher_controller.publisher:main',
         ],
     },
 )

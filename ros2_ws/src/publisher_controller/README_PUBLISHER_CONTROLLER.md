@@ -104,7 +104,7 @@ Replace <package_name> with the name of your package and <node_executable> with 
 Example:
 ```
 
-ros2 run xbox_controller publisher
+ros2 run publisher_controller publisher
 
 ```
 

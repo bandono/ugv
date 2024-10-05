@@ -17,6 +17,12 @@ STOP_DELAY = 0.5  # Delay in seconds before sending the stop command
 LOW_SPEED = 0.14  # Minimum speed
 MAX_SPEED = 1.7   # Maximum speed
 
+# motor addressing
+FRONT_LEFT = 0x00
+FRONT_RIGHT = 0x01
+BACK_LEFT = 0x02
+BACK_RIGHT = 0x03
+
 class UGVCruiser(Node):
     def __init__(self):
         super().__init__('twist_ugv_cruiser')
@@ -39,37 +45,48 @@ class UGVCruiser(Node):
         # Extract linear velocity in the x direction
         linear_x = msg.linear.x
 
-        # First interpretation: move forward or stop
-        if linear_x > 0:  # Forward motion
-            self.move_forward()
-        elif linear_x == 0:  # Stop condition (message explicitly tells to stop)
-            self.stop_robot()
+        # Check if the speed has changed and handle speed changes first
+        if linear_x != self.current_speed:
+            self.handle_speed(FRONT_LEFT, linear_x)
+            self.handle_speed(FRONT_RIGHT, linear_x)
+            self.handle_speed(BACK_LEFT, linear_x)
+            self.handle_speed(BACK_RIGHT, linear_x)
+        else:
+            # Handle forward motion or stop only if linear_x changes but not for speed adjustment
+            if linear_x > 0:  # Forward motion
+                # currently move all motor
+                self.move_forward(FRONT_LEFT)
+                self.move_forward(FRONT_RIGHT)
+                self.move_forward(BACK_LEFT)
+                self.move_forward(BACK_RIGHT)
+            elif linear_x == 0:  # Stop condition (message explicitly tells to stop)
+                self.stop_robot(FRONT_LEFT)
+                self.stop_robot(FRONT_RIGHT)
+                self.stop_robot(BACK_LEFT)
+                self.stop_robot(BACK_RIGHT)
 
-        # Handle speed interpretation
-        self.handle_speed(linear_x)
-
-    def move_forward(self):
+    def move_forward(self, motor_address):
         if not self.moving_forward:
-            # Send "0x49" to serial to move forward
-            self.ser.write(b'\x49')
-            self.get_logger().info('Sending move command (0x49)')
+            # Send motor address followed by "0x49" to serial to move forward
+            self.ser.write(bytes([motor_address, 0x49]))
+            self.get_logger().info(f'Sending move command (0x49) to motor {motor_address}')
             self.moving_forward = True
 
         # Reset the stop timer every time we receive a forward command
         if self.stop_timer is not None:
             self.stop_timer.cancel()
 
-        # Start the stop timer to send "0x6B" after STOP_DELAY
-        self.stop_timer = threading.Timer(STOP_DELAY, self.stop_robot)
+        # Start the stop timer to send stop command after STOP_DELAY
+        self.stop_timer = threading.Timer(STOP_DELAY, self.stop_robot, [motor_address])
         self.stop_timer.start()
 
-    def stop_robot(self):
-        # Send "0x6B" to serial to stop
-        self.ser.write(b'\x6B')
-        self.get_logger().info('Sending stop command (0x6B)')
+    def stop_robot(self, motor_address):
+        # Send motor address followed by "0x6B" to serial to stop
+        self.ser.write(bytes([motor_address, 0x6B]))
+        self.get_logger().info(f'Sending stop command (0x6B) to motor {motor_address}')
         self.moving_forward = False
 
-    def handle_speed(self, linear_x):
+    def handle_speed(self, motor_address, linear_x):
         # Only proceed if linear_x is within the defined range
         if LOW_SPEED < linear_x < MAX_SPEED:
             # If the new speed is greater than the current speed, increase it
@@ -79,9 +96,9 @@ class UGVCruiser(Node):
                 # Log the new speed
                 self.get_logger().info(f'Speed increased to: {self.current_speed}')
                 
-                # Send serial command to increase speed
-                self.ser.write(b'\x51')  # Example: 0x51 for speed increase
-                self.get_logger().info(f'Sending increase speed command (0x51)')
+                # Send serial command to increase speed (e.g., 0x51 for speed increase)
+                self.ser.write(bytes([motor_address, 0x51]))
+                self.get_logger().info(f'Sending increase speed command (0x51) to motor {motor_address}')
 
             # If the new speed is less than the current speed, decrease it
             elif linear_x < self.current_speed:
@@ -90,9 +107,9 @@ class UGVCruiser(Node):
                 # Log the new speed
                 self.get_logger().info(f'Speed decreased to: {self.current_speed}')
                 
-                # Send serial command to decrease speed
-                self.ser.write(b'\x41')  # Example: 0x41 for speed decrease
-                self.get_logger().info(f'Sending decrease speed command (0x41)')
+                # Send serial command to decrease speed (e.g., 0x41 for speed decrease)
+                self.ser.write(bytes([motor_address, 0x41]))
+                self.get_logger().info(f'Sending decrease speed command (0x41) to motor {motor_address}')
 
 
 
